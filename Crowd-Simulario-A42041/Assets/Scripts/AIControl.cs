@@ -5,18 +5,28 @@ using UnityEngine.AI;
 
 public class AIControl : MonoBehaviour
 {
-    public GameObject goal;
+    GameObject[] goalLocations;
     NavMeshAgent agent;
+    Animator anim;
     // Start is called before the first frame update
     void Start()
     {
         agent = this.GetComponent<NavMeshAgent>();
-        agent.SetDestination(goal.transform.position);
+        goalLocations = GameObject.FindGameObjectsWithTag("goal");
+        int i = Random.Range(0, goalLocations.Length);
+        agent.SetDestination(goalLocations[i].transform.position);
+        anim = GetComponent<Animator>();
+        anim.SetTrigger("isWalking");
     }
 
     // Update is called once per frame
     void Update()
     {
+        if(agent.remainingDistance<1)
+        {
+            int i = Random.Range(0, goalLocations.Length);
+            agent.SetDestination(goalLocations[i].transform.position);
+        }
 
     }
 }
