@@ -15,10 +15,15 @@ public class Flock : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ApplyRules();
-
+        if (Random.Range(0, 100) < 10)
+        {
+            speed = Random.Range(FlockManager.FM.minSpeed, FlockManager.FM.maxSpeed);
+        }
+        if (Random.Range(0, 100) < 10)
+        {
+            ApplyRules();
+        }
         this.transform.Translate(0, 0, speed * Time.deltaTime);
-
     }
 
     private void ApplyRules()
@@ -55,10 +60,15 @@ public class Flock : MonoBehaviour
 
         if(groupSize > 0)
         {
-            vcentre = vcentre / groupSize;
+            vcentre = vcentre / groupSize + (FlockManager.FM.goalPos - this.transform.position);
             speed = gSpeed / groupSize;
 
             Vector3 diretion = (vcentre + vavoid) - transform.position;
+
+            if(speed > FlockManager.FM.maxSpeed)
+            {
+                speed = FlockManager.FM.maxSpeed;
+            }
 
             if (diretion != Vector3.zero)
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(diretion), FlockManager.FM.RotationSpeed * Time.deltaTime);
