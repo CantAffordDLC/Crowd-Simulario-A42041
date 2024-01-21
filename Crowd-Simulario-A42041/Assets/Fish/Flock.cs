@@ -6,22 +6,44 @@ using UnityEngine;
 public class Flock : MonoBehaviour
 {
     float speed;
+    bool turning = false;
     // Start is called before the first frame update
     void Start()
     {
         speed = Random.Range(FlockManager.FM.minSpeed, FlockManager.FM.maxSpeed);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Random.Range(0, 100) < 10)
+
+        Bounds b = new Bounds(FlockManager.FM.transform.position, FlockManager.FM.swimLimits * 2);
+
+        if (!b.Contains(transform.position))
         {
-            speed = Random.Range(FlockManager.FM.minSpeed, FlockManager.FM.maxSpeed);
+            turning = true;
         }
-        if (Random.Range(0, 100) < 10)
+        else
         {
-            ApplyRules();
+            turning = false;
+        }
+
+        if (turning)
+        {
+            Vector3 diretion = FlockManager.FM.transform.position - transform.position;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(diretion), FlockManager.FM.RotationSpeed * Time.deltaTime);
+        }
+        else
+        {
+            if (Random.Range(0, 100) < 10)
+            {
+                speed = Random.Range(FlockManager.FM.minSpeed, FlockManager.FM.maxSpeed);
+            }
+            if (Random.Range(0, 100) < 10)
+            {
+                ApplyRules();
+            }
         }
         this.transform.Translate(0, 0, speed * Time.deltaTime);
     }
@@ -39,10 +61,10 @@ public class Flock : MonoBehaviour
 
         foreach (GameObject go in gos)
         {
-            if(go != this.gameObject)
+            if (go != this.gameObject)
             {
                 nDistance = Vector3.Distance(go.transform.position, this.transform.position);
-                if(nDistance <= FlockManager.FM.NeighbourDistance)
+                if (nDistance <= FlockManager.FM.NeighbourDistance)
                 {
                     vcentre += go.transform.position;
                     groupSize++;
@@ -52,20 +74,20 @@ public class Flock : MonoBehaviour
                         vavoid = vavoid + (this.transform.position - go.transform.position);
                     }
 
-                    Flock anotherFlock = go.GetComponent< Flock>();
+                    Flock anotherFlock = go.GetComponent<Flock>();
                     gSpeed = gSpeed + anotherFlock.speed;
                 }
             }
         }
 
-        if(groupSize > 0)
+        if (groupSize > 0)
         {
             vcentre = vcentre / groupSize + (FlockManager.FM.goalPos - this.transform.position);
             speed = gSpeed / groupSize;
 
             Vector3 diretion = (vcentre + vavoid) - transform.position;
 
-            if(speed > FlockManager.FM.maxSpeed)
+            if (speed > FlockManager.FM.maxSpeed)
             {
                 speed = FlockManager.FM.maxSpeed;
             }
