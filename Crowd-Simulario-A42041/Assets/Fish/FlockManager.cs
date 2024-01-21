@@ -25,7 +25,7 @@ public class FlockManager : MonoBehaviour
             Vector3 pos = this.transform.position + new Vector3(Random.Range(-swimLimits.x, swimLimits.x), 
                                                                 Random.Range(-swimLimits.y, swimLimits.y), 
                                                                 Random.Range(-swimLimits.z, swimLimits.z));
-            allFish[i] = Instantiate(fishPrefab, pos, Quaternion.identity );
+            allFish[i] = Instantiate(fishPrefab, pos, Quaternion.identity);
         }
         FM = this;
     }
